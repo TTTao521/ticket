@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>多板块跳转网站 | 简约导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, 'Roboto', sans-serif;
+            background-color: #f9fafb;
+            color: #1f2937;
+            scroll-behavior: smooth; /* 浏览器原生平滑滚动 */
+        }
+
+        /* 固定导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 500;
+            color: #1f2937;
+            transition: color 0.2s;
+            font-size: 1.05rem;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+
+        /* 激活菜单指示 (简单下划线效果) */
+        .nav-links a.active {
+            color: #3b82f6;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        /* 每个板块通用样式 */
+        section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5rem 2rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #111827;
+        }
+
+        .lead {
+            font-size: 1.2rem;
+            color: #4b5563;
+            max-width: 700px;
+            margin: 0 auto 2rem auto;
+            line-height: 1.6;
+        }
+
+        /* 卡片/服务网格 */
+        .services-grid, .work-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            width: 260px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #f0f2f5;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .card p {
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        /* 联系表单简单样式 */
+        .contact-form {
+            max-width: 500px;
+            margin: 2rem auto 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-form input, .contact-form textarea {
+            padding: 0.9rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 2rem;
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .contact-form input:focus, .contact-form textarea:focus {
+            border-color: #3b82f6;
+        }
+
+        .contact-form button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.9rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .contact-form button:hover {
+            background: #2563eb;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: #f3f4f6;
+            color: #4b5563;
+            font-size: 0.9rem;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            .nav-links {
+                gap: 1.2rem;
+                justify-content: center;
+            }
+            h1 {
+                font-size: 2.2rem;
+            }
+            h2 {
+                font-size: 1.8rem;
+            }
+            section {
+                padding: 4rem 1.5rem;
+            }
+            .card {
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+
+        /* 给不同板块微调背景 */
+        #home {
+            background: linear-gradient(135deg, #f0f9ff 0%, #eef2ff 100%);
+        }
+        #about {
+            background-color: #ffffff;
+        }
+        #services {
+            background-color: #fefce8;
+        }
+        #work {
+            background-color: #f1f5f9;
+        }
+        #contact {
+            background-color: #ffffff;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.7rem 1.8rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">✨ 板块站点</div>
+        <ul class="nav-links">
+            <li><a href="#home" class="nav-link">首页</a></li>
+            <li><a href="#about" class="nav-link">关于</a></li>
+            <li><a href="#services" class="nav-link">服务</a></li>
+            <li><a href="#work" class="nav-link">作品</a></li>
+            <li><a href="#contact" class="nav-link">联系</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main>
+    <!-- 首页板块 -->
+    <section id="home">
+        <div class="container">
+            <h1>欢迎来到板块世界</h1>
+            <p class="lead">点击上方导航栏，平滑跳转到不同板块。现代、干净、响应式设计，适配所有设备。</p>
+            <a href="#about" class="btn">探索更多 ↓</a>
+        </div>
+    </section>
+
+    <!-- 关于板块 -->
+    <section id="about">
+        <div class="container">
+            <h2>关于我们</h2>
+            <p class="lead">我们专注于创造直观且富有吸引力的数字体验。这个网站完全由HTML/CSS/JS构建，每个板块都是独立区域，点击导航即可跳转。</p>
+            <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 2rem;">
+                <div style="background: #eef2ff; padding: 1rem 1.5rem; border-radius: 2rem;">🚀 快速跳转</div>
+                <div style="background: #eef2ff; padding: 1rem 1.5rem; border-radius: 2rem;">🎨 现代设计</div>
+                <div style="background: #eef2ff; padding: 1rem 1.5rem; border-radius: 2rem;">📱 手机友好</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 服务板块 -->
+    <section id="services">
+        <div class="container">
+            <h2>我们的服务</h2>
+            <p class="lead">点击导航栏“服务”即可跳转至此 — 展示不同服务卡片。</p>
+            <div class="services-grid">
+                <div class="card">
+                    <div class="card-icon">💡</div>
+                    <h3>创意咨询</h3>
+                    <p>帮助你定义品牌与数字策略，让想法落地。</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛠️</div>
+                    <h3>Web开发</h3>
+                    <p>现代响应式网站，流畅跳转与交互体验。</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎯</div>
+                    <h3>用户体验设计</h3>
+                    <p>以用户为中心，提升转化与满意度。</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📈</div>
+                    <h3>SEO优化</h3>
+                    <p>让网站在搜索引擎中获得更好排名。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 作品板块 -->
+    <section id="work">
+        <div class="container">
+            <h2>精选作品</h2>
+            <p class="lead">部分项目展示 — 点击导航跳转，感受多板块切换的便捷。</p>
+            <div class="work-grid">
+                <div class="card">
+                    <div class="card-icon">🌐</div>
+                    <h3>品牌官网</h3>
+                    <p>全屏滚动，多板块叙事型网站。</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛒</div>
+                    <h3>电商界面</h3>
+                    <p>产品展示与分类跳转设计。</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📱</div>
+                    <h3>APP概念</h3>
+                    <p>移动优先的板块交互原型。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系板块 -->
+    <section id="contact">
+        <div class="container">
+            <h2>联系我们</h2>
+            <p class="lead">有任何问题或项目需求？欢迎留下信息，我们会尽快回复。</p>
+            <form class="contact-form" id="demoForm">
+                <input type="text" placeholder="您的姓名" required>
+                <input type="email" placeholder="电子邮箱" required>
+                <textarea rows="3" placeholder="留言内容..."></textarea>
+                <button type="submit">发送消息 ✨</button>
+            </form>
+            <p style="margin-top: 1.5rem; font-size: 0.9rem; color: #6c757d;">📧 example@domain.com  |  📞 (86) 123-45678</p>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>© 2025 板块跳转网站 | 点击导航即可浏览不同区块 | 平滑滚动体验</p>
+</footer>
+
+<script>
+    // 获取所有导航链接和板块
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    // 滚动时高亮当前导航菜单 (可选增强体验)
+    function updateActiveLink() {
+        let current = '';
+        const scrollPosition = window.scrollY + 120; // 偏移量避免导航栏遮挡导致高亮不准
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            const href = link.getAttribute('href').substring(1); // 去掉 #
+            if (href === current) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // 监听滚动事件更新激活菜单
+    window.addEventListener('scroll', updateActiveLink);
+    window.addEventListener('load', updateActiveLink);
+
+    // 可选: 为导航点击增加更顺滑的兼容处理(原生scroll-behavior已支持，但确保点击后url变化不影响高亮)
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // 原生scroll-behavior smooth已经足够，不用额外操作，但让高亮更新
+            // 确保点击后延迟一下高亮重新计算
+            setTimeout(() => {
+                updateActiveLink();
+            }, 100);
+        });
+    });
+
+    // 联系表单简单提交提示（避免页面刷新）
+    const form = document.getElementById('demoForm');
+    if(form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('感谢您的留言！(演示模式，消息未实际发送)');
+            form.reset();
+        });
+    }
+</script>
+</body>
+</html>
